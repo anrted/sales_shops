@@ -6,3 +6,4 @@
 /frontend/.output/
 /.idea/
 /.vscode/
+/backend/database/database.sqlite
