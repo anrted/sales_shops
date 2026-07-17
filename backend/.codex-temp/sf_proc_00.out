@@ -1,0 +1,16 @@
+
+   PASS  Tests\Feature\MagnitProviderTest
+  ✓ magnit provider parses products without legacy project                                                       1.80s  
+  ✓ magnit categories are saved per store type                                                                   0.02s  
+  ✓ magnit provider uses stores and categories from database when available                                      1.53s  
+  ✓ magnit goods request matches minimal header set                                                              1.52s  
+  ✓ magnit provider skips waf blocked category and continues parse                                               1.52s  
+  ✓ magnit city parse uses only active stores and prioritizes gm before mm                                       0.02s  
+  ✓ magnit parse requests only top level categories from database                                                1.52s  
+  ✓ magnit pagination stops by total count when has more flag is still true                                      5.38s  
+  ✓ magnit limits category to top discounted 150 items                                                           6.02s  
+  ✓ magnit category sync forces refresh from site for admin import                                               0.01s  
+
+  Tests:    10 passed (48 assertions)
+  Duration: 19.52s
+

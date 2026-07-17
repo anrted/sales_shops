@@ -1,0 +1,11 @@
+{
+  "name": "lenta-session-refresh",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "refresh": "node refresh.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.54.0"
+  }
+}
