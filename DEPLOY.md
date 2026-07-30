@@ -62,36 +62,14 @@ crontab -e
 15 3 * * * cd /АБСОЛЮТНЫЙ/ПУТЬ/К/ПРОЕКТУ/backend && /usr/bin/php artisan lenta:refresh-session >> /АБСОЛЮТНЫЙ/ПУТЬ/К/ПРОЕКТУ/backend/storage/logs/lenta-session-refresh.log 2>&1
 ```
 
-## Настройка веб-сервера (Nginx)
+## Как это работает
 
-По умолчанию Docker-контейнеры публикуют следующие порты на `localhost`:
-- Frontend (Nuxt 3): `http://127.0.0.1:3000`
-- Backend API (Laravel): `http://127.0.0.1:8080/api`
+При запуске `install.sh` собирается production-версия приложения:
+- Frontend (Nuxt) собирается в статику/серверный бандл и работает внутри контейнера.
+- Встроенный в Docker `nginx` принимает все внешние запросы на порту `80`.
+- Запросы на `/api` он маршрутизирует к бэкенду (Laravel PHP-FPM).
+- Все остальные запросы проксируются на фронтенд.
 
-Рекомендуется настроить Nginx в качестве reverse-proxy, чтобы перенаправлять трафик с вашего домена 80/443 порта на эти локальные порты.
+Сайт будет доступен по IP вашего сервера или домену, если вы привязали его к IP-адресу, на стандартном порту 80 (HTTP).
 
-Пример конфигурации Nginx (`/etc/nginx/sites-available/discounts`):
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    # Backend API
-    location /api {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Frontend
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
+> Если вам нужен HTTPS, вы можете настроить внешний Nginx на самом сервере с SSL-сертификатами (Let's Encrypt / Certbot), который будет проксировать трафик на порт 80 (в таком случае вам может понадобиться изменить проброс портов в `docker-compose.yml`, чтобы Docker не занимал 80 порт сервера целиком).
