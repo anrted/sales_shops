@@ -66,10 +66,35 @@ crontab -e
 
 При запуске `install.sh` собирается production-версия приложения:
 - Frontend (Nuxt) собирается в статику/серверный бандл и работает внутри контейнера.
-- Встроенный в Docker `nginx` принимает все внешние запросы на порту `80`.
+- Встроенный в Docker `nginx` принимает все внешние запросы на порту `8080`.
 - Запросы на `/api` он маршрутизирует к бэкенду (Laravel PHP-FPM).
 - Все остальные запросы проксируются на фронтенд.
 
-Сайт будет доступен по IP вашего сервера или домену, если вы привязали его к IP-адресу, на стандартном порту 80 (HTTP).
+Сайт будет доступен по адресу `http://127.0.0.1:8080`.
 
-> Если вам нужен HTTPS, вы можете настроить внешний Nginx на самом сервере с SSL-сертификатами (Let's Encrypt / Certbot), который будет проксировать трафик на порт 80 (в таком случае вам может понадобиться изменить проброс портов в `docker-compose.yml`, чтобы Docker не занимал 80 порт сервера целиком).
+## Настройка веб-сервера (Nginx на хосте)
+
+Так как на вашем сервере уже установлен Nginx (поэтому порт 80 был занят), вам нужно настроить его как reverse-proxy. Это позволит привязать к проекту домен и SSL-сертификат.
+
+Пример конфигурации для вашего Nginx (создайте файл `/etc/nginx/sites-available/discounts`):
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com; # замените на ваш домен
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+После добавления конфига:
+```bash
+ln -s /etc/nginx/sites-available/discounts /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx
+```
