@@ -4,7 +4,7 @@
 
 ## Stack
 
-- Backend: Laravel API, PHP 8.3, queues, scheduler
+- Backend: Laravel API, PHP 8.4, queues, scheduler
 - Frontend: Nuxt 3, Vue 3, TypeScript, Tailwind
 - Database: PostgreSQL
 - Cache and queues: Redis
