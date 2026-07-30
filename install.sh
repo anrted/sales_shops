@@ -77,8 +77,11 @@ echo -e "\n${GREEN}Starting Docker containers...${NC}"
 $DOCKER_COMPOSE_CMD up -d --build
 
 # 7. Initialize Laravel
-echo -e "\n${GREEN}Waiting for backend to install dependencies...${NC}"
-$DOCKER_COMPOSE_CMD exec -T backend sh -c "while [ ! -f vendor/autoload.php ]; do sleep 2; done"
+echo -e "\n${GREEN}Installing PHP dependencies...${NC}"
+$DOCKER_COMPOSE_CMD exec -T backend composer install --no-interaction --optimize-autoloader
+
+echo -e "\n${GREEN}Waiting for services to be ready...${NC}"
+sleep 5
 
 echo -e "\n${GREEN}Initializing Laravel...${NC}"
 $DOCKER_COMPOSE_CMD exec -T backend php artisan key:generate

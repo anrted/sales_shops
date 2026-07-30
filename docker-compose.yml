@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     working_dir: /var/www/backend
-    command: sh -c "if [ ! -d vendor ]; then composer install; fi; php-fpm"
+    command: sh -c "if [ ! -f vendor/autoload.php ]; then composer install --no-interaction; fi; php-fpm"
     volumes:
       - ./backend:/var/www/backend
     environment:
