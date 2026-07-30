@@ -22,10 +22,12 @@ sudo apt-get install -y nodejs
 
 ## Установка и запуск
 
-1. **Клонируйте репозиторий:**
+1. **Перейдите в рабочую директорию и клонируйте репозиторий:**
+   Вы можете установить проект в любую папку на сервере (например, `/var/www/panel.xeber.ru`).
    ```bash
-   git clone https://github.com/anrted/sales_shops.git discounts
-   cd discounts
+   mkdir -p /var/www/panel.xeber.ru
+   cd /var/www/panel.xeber.ru
+   git clone https://github.com/anrted/sales_shops.git .
    ```
 
 2. **Запустите скрипт автоматической установки:**
