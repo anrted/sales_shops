@@ -7,3 +7,6 @@
 /.idea/
 /.vscode/
 /backend/database/database.sqlite
+tools/lenta-session-refresh/node_modules/
+lenta.txt
+/.tmp/
