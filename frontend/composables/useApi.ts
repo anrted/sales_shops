@@ -11,6 +11,11 @@ export function useApi() {
       if (token.value) {
         options.headers['Authorization'] = `Bearer ${token.value}`
       }
+    },
+    onResponseError({ response }) {
+      if (response._data && typeof response._data === 'object' && response._data.message) {
+        response.statusText = response._data.message
+      }
     }
   })
 }

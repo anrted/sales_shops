@@ -17,7 +17,10 @@ class MetroStoreCatalogSync
     /** @return array{cities:int, stores:int} */
     public function sync(): array
     {
-        $chain = Chain::query()->where('code', 'metro')->firstOrFail();
+        $chain = Chain::query()->firstOrCreate(
+            ['code' => 'metro'],
+            ['name' => 'Metro', 'is_active' => true]
+        );
         $tradeCenters = $this->fetchTradeCenters();
         $storeExternalIds = [];
         $cityIds = [];

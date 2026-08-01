@@ -12,7 +12,7 @@ if [ ! -f .env ]; then
 fi
 
 # 2. Fix permissions
-mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
+mkdir -p storage/app/public storage/app storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
 chmod -R 777 storage bootstrap/cache 2>/dev/null || true
 
 # 3. Check APP_KEY and generate if missing

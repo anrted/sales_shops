@@ -62,18 +62,24 @@ class AdminMagnitController extends Controller
     public function region(Request $request): JsonResponse
     {
         $queryRegion = $request->query('region');
-        $storeRegion = is_string($queryRegion) && $queryRegion !== '' ? mb_strtolower($queryRegion) : config('services.magnit.store_region');
-        $regions = config('services.magnit.store_regions', []);
+        $configRegion = config('services.magnit.store_region');
+        $storeRegion = is_string($queryRegion) && $queryRegion !== ''
+            ? mb_strtolower($queryRegion)
+            : (is_string($configRegion) && $configRegion !== '' ? mb_strtolower($configRegion) : null);
+
+        $regions = config('services.magnit.store_regions');
+        $regions = is_array($regions) ? $regions : [];
         $activeBoxes = [];
 
         if (is_string($storeRegion) && $storeRegion !== '') {
-            if (is_array($regions) && isset($regions[$storeRegion]) && is_array($regions[$storeRegion])) {
+            if (isset($regions[$storeRegion]) && is_array($regions[$storeRegion])) {
                 $activeBoxes = $regions[$storeRegion];
             }
         }
 
         if (!$activeBoxes) {
-            $activeBoxes = config('services.magnit.store_boxes', []);
+            $configBoxes = config('services.magnit.store_boxes');
+            $activeBoxes = is_array($configBoxes) ? $configBoxes : [];
         }
 
         $activeBoxes = array_values(array_filter($activeBoxes, static fn ($box): bool => is_array($box) && isset($box['lat1'], $box['lon1'], $box['lat2'], $box['lon2'])));

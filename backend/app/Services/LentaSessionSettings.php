@@ -261,11 +261,16 @@ class LentaSessionSettings
     private function readStatus(): array
     {
         $path = storage_path(self::STATUS_FILE);
-        if (!is_file($path)) {
+        if (!is_file($path) || !is_readable($path)) {
             return [];
         }
 
-        $decoded = json_decode((string) file_get_contents($path), true);
+        $content = @file_get_contents($path);
+        if ($content === false) {
+            return [];
+        }
+
+        $decoded = json_decode($content, true);
 
         return is_array($decoded) ? $decoded : [];
     }
@@ -278,10 +283,10 @@ class LentaSessionSettings
         $path = storage_path(self::STATUS_FILE);
         $directory = dirname($path);
         if (!is_dir($directory)) {
-            mkdir($directory, 0777, true);
+            @mkdir($directory, 0777, true);
         }
 
-        file_put_contents(
+        @file_put_contents(
             $path,
             json_encode($status, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         );
