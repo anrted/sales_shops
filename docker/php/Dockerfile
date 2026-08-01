@@ -28,7 +28,8 @@ COPY backend .
 RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions storage/framework/views storage/logs \
     && rm -f bootstrap/cache/packages.php bootstrap/cache/services.php \
     && chmod -R 777 storage bootstrap/cache \
-    && composer dump-autoload --optimize \
+    && composer dump-autoload --optimize
+
 # Копируем entrypoint скрипт автоматической инициализации
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
