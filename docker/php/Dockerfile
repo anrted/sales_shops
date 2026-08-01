@@ -29,4 +29,9 @@ RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions 
     && rm -f bootstrap/cache/packages.php bootstrap/cache/services.php \
     && chmod -R 777 storage bootstrap/cache \
     && composer dump-autoload --optimize \
-    && chown -R www-data:www-data /var/www/backend
+# Копируем entrypoint скрипт автоматической инициализации
+COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php-fpm"]

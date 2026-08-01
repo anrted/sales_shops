@@ -52,8 +52,16 @@ if [ "$NEED_BUILD" -eq 1 ]; then
     docker compose up -d --build -V backend queue scheduler || echo "[WARNING] Docker build returned non-zero code, continuing..."
 fi
 
-echo "[STEP] Running database migrations..."
+echo "[STEP] Running database migrations and clearing cache..."
 cd "$ROOT_DIR/backend"
+
+if [ -f .env ] && ! grep -qE '^APP_KEY=base64:' .env; then
+    echo "[STEP] Generating APP_KEY..."
+    php artisan key:generate --force
+fi
+
+php artisan config:clear || true
+php artisan cache:clear || true
 php artisan migrate --force
 
 if [ "$NEED_FRONTEND_RESTART" -eq 1 ]; then
