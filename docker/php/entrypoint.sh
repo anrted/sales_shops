@@ -31,6 +31,7 @@ php artisan cache:clear || true
 if [ "$1" = "php-fpm" ]; then
     echo "[ENTRYPOINT] Running database migrations..."
     php artisan migrate --force || echo "[ENTRYPOINT WARNING] Migration failed, proceeding..."
+    php artisan db:seed --force || echo "[ENTRYPOINT WARNING] Seeding failed, proceeding..."
 fi
 
 exec "$@"

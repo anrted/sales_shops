@@ -63,6 +63,7 @@ fi
 php artisan config:clear || true
 php artisan cache:clear || true
 php artisan migrate --force
+php artisan db:seed --force
 
 if [ "$NEED_FRONTEND_RESTART" -eq 1 ]; then
     echo "[STEP] Restarting frontend container..."
