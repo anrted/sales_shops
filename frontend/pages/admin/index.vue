@@ -996,7 +996,7 @@ const navSections = [
 
 const { data: citiesData, refresh: refreshCities } = await useAsyncData('admin-cities', () => api<ListResponse<City>>('/cities'))
 const { data: chainsData } = await useAsyncData('admin-chains', () => api<ListResponse<Chain>>('/chains'))
-const { data: runsData, refresh: refreshRuns } = await useAsyncData('parse-runs', () => api<ListResponse<ParseRun>>('/admin/parse-runs'))
+const { data: runsData, refresh: refreshRuns } = await useAsyncData('parse-runs', () => api<ListResponse<ParseRun>>('/admin/parse-runs'), { lazy: true })
 const { data: storesData, refresh: refreshStores } = await useAsyncData('admin-stores', () => api<ListResponse<Store>>('/stores'))
 const { data: magnitCategoriesData, refresh: refreshMagnitCategories } = await useAsyncData('admin-magnit-categories', () => api<ListResponse<Category>>('/categories', {
   query: { chain: 'magnit', top_only: false }
@@ -1007,8 +1007,8 @@ const { data: metroCategoriesData } = await useAsyncData('admin-metro-categories
 const { data: lentaCategoriesData, refresh: refreshLentaCategories } = await useAsyncData('admin-lenta-categories', () => api<ListResponse<Category>>('/categories', {
   query: { chain: 'lenta', top_only: false }
 }))
-const { data: magnitRegionData } = await useAsyncData('admin-magnit-region', () => api<{ item: MagnitRegion }>('/admin/magnit/region'))
-const { data: lentaSessionData, refresh: refreshLentaSession } = await useAsyncData('admin-lenta-session', () => api<{ item: LentaSessionState }>('/admin/lenta/session'))
+const { data: magnitRegionData } = await useAsyncData('admin-magnit-region', () => api<{ item: MagnitRegion }>('/admin/magnit/region'), { lazy: true })
+const { data: lentaSessionData, refresh: refreshLentaSession } = await useAsyncData('admin-lenta-session', () => api<{ item: LentaSessionState }>('/admin/lenta/session'), { lazy: true })
 
 const magnitRegion = computed(() => magnitRegionData.value?.item)
 const cities = computed(() => citiesData.value?.items || [])
