@@ -47,28 +47,14 @@ fi
 echo "[STEP] Checking out $TARGET_HASH..."
 git checkout -f "$TARGET_HASH"
 
-if [ "$NEED_BUILD" -eq 1 ]; then
-    echo "[STEP] Rebuilding backend containers..."
-    docker compose up -d --build -V backend queue scheduler || echo "[WARNING] Docker build returned non-zero code, continuing..."
-fi
+echo "[STEP] Rebuilding and updating backend containers..."
+docker compose up -d --build backend queue scheduler frontend || echo "[WARNING] Docker build returned non-zero code, continuing..."
 
-echo "[STEP] Running database migrations and clearing cache..."
-cd "$ROOT_DIR/backend"
+echo "[STEP] Running database migrations and clearing cache inside Docker container..."
 
-if [ -f .env ] && ! grep -qE '^APP_KEY=base64:' .env; then
-    echo "[STEP] Generating APP_KEY..."
-    php artisan key:generate --force
-fi
-
-php artisan config:clear || true
-php artisan cache:clear || true
-php artisan migrate --force
-php artisan db:seed --force
-
-if [ "$NEED_FRONTEND_RESTART" -eq 1 ]; then
-    echo "[STEP] Restarting frontend container..."
-    cd "$ROOT_DIR"
-    docker compose restart frontend || echo "[WARNING] Frontend restart failed, continuing..."
-fi
+docker compose exec -T backend php artisan config:clear || true
+docker compose exec -T backend php artisan cache:clear || true
+docker compose exec -T backend php artisan migrate --force || echo "[WARNING] Migration failed"
+docker compose exec -T backend php artisan db:seed --force || echo "[WARNING] Seed failed"
 
 echo "[STEP] System update completed successfully!"
