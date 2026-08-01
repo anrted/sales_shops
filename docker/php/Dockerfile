@@ -24,8 +24,9 @@ RUN composer install --no-scripts --no-autoloader --prefer-dist
 # Копируем остальной код проекта
 COPY backend .
 
-# Очищаем возможные кеши из хост-системы и генерируем автозагрузчик
-RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php \
+# Подготавливаем директории и права перед генерацией автозагрузчика
+RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions storage/framework/views storage/logs \
+    && rm -f bootstrap/cache/packages.php bootstrap/cache/services.php \
+    && chmod -R 777 storage bootstrap/cache \
     && composer dump-autoload --optimize \
-    && chown -R www-data:www-data /var/www/backend \
-    && chmod -R 775 /var/www/backend/storage /var/www/backend/bootstrap/cache
+    && chown -R www-data:www-data /var/www/backend
