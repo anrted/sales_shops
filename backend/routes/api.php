@@ -16,7 +16,7 @@ Route::get('/products/{product}', [CatalogController::class, 'product']);
 
 use App\Http\Controllers\Api\AuthController;
 
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/auth/logout', [AuthController::class, 'logout']);

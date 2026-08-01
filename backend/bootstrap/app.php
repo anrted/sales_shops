@@ -35,11 +35,15 @@ return Application::configure(basePath: dirname(__DIR__))
                     $statusCode = $e->getStatusCode();
                     $errorCode = $e->getErrorCode();
                     $message = $e->getMessage();
+                } elseif ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                    $statusCode = 401;
+                    $errorCode = 'UNAUTHENTICATED';
+                    $message = 'Необходима авторизация.';
                 } elseif ($e instanceof \Illuminate\Validation\ValidationException) {
                     $statusCode = 422;
                     $errorCode = 'VALIDATION_FAILED';
                     $message = $e->getMessage();
-                } elseif ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                } elseif ($e instanceof \Symfony\Component\Routing\Exception\RouteNotFoundException && str_contains($e->getMessage(), 'login')) {
                     $statusCode = 401;
                     $errorCode = 'UNAUTHENTICATED';
                     $message = 'Необходима авторизация.';
