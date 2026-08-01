@@ -19,12 +19,13 @@ WORKDIR /var/www/backend
 
 # Кешируем зависимости Composer
 COPY backend/composer.json backend/composer.lock* ./
-RUN composer install --no-scripts --no-autoloader --prefer-dist --no-dev
+RUN composer install --no-scripts --no-autoloader --prefer-dist
 
-# Копируем остальной код проекта (для production)
+# Копируем остальной код проекта
 COPY backend .
 
-# Генерируем оптимизированный автозагрузчик
-RUN composer dump-autoload --optimize \
+# Очищаем возможные кеши из хост-системы и генерируем автозагрузчик
+RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php \
+    && composer dump-autoload --optimize \
     && chown -R www-data:www-data /var/www/backend \
     && chmod -R 775 /var/www/backend/storage /var/www/backend/bootstrap/cache
