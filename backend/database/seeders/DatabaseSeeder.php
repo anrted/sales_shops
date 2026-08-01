@@ -16,5 +16,9 @@ class DatabaseSeeder extends Seeder
         ] as $chain) {
             Chain::query()->updateOrCreate(['code' => $chain['code']], $chain + ['is_active' => true]);
         }
+
+        $this->call([
+            AdminUserSeeder::class,
+        ]);
     }
 }

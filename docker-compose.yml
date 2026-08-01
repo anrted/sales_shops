@@ -4,9 +4,12 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     working_dir: /var/www/backend
-    command: sh -c "if [ ! -f vendor/autoload.php ]; then composer install --no-interaction; fi; php-fpm"
+    command: php-fpm
     volumes:
+      - ./:/var/www/app_root
       - ./backend:/var/www/backend
+      - backend-vendor:/var/www/backend/vendor
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       APP_ENV: local
       DB_CONNECTION: pgsql
@@ -26,9 +29,12 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     working_dir: /var/www/backend
-    command: sh -c "until [ -f vendor/autoload.php ]; do sleep 2; done; php artisan queue:work --sleep=2 --tries=3 --timeout=180"
+    command: php artisan queue:work --sleep=2 --tries=3 --timeout=180
     volumes:
+      - ./:/var/www/app_root
       - ./backend:/var/www/backend
+      - backend-vendor:/var/www/backend/vendor
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - backend
       - redis
@@ -39,9 +45,10 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     working_dir: /var/www/backend
-    command: sh -c "until [ -f vendor/autoload.php ]; do sleep 2; done; php artisan schedule:work"
+    command: php artisan schedule:work
     volumes:
       - ./backend:/var/www/backend
+      - backend-vendor:/var/www/backend/vendor
     depends_on:
       - backend
       - redis
@@ -87,3 +94,4 @@ services:
 
 volumes:
   pgdata:
+  backend-vendor:

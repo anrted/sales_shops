@@ -14,7 +14,16 @@ Route::get('/stores', [CatalogController::class, 'stores']);
 Route::get('/discounts', [CatalogController::class, 'discounts']);
 Route::get('/products/{product}', [CatalogController::class, 'product']);
 
-Route::prefix('admin')->group(function (): void {
+use App\Http\Controllers\Api\AuthController;
+
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::get('/auth/me', [AuthController::class, 'me']);
+});
+
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function (): void {
     Route::post('/magnit/stores/sync', [AdminMagnitController::class, 'syncStores']);
     Route::post('/magnit/categories/sync', [AdminMagnitController::class, 'syncCategories']);
     Route::post('/magnit/stores/import', [AdminMagnitController::class, 'importStores']);
@@ -31,4 +40,9 @@ Route::prefix('admin')->group(function (): void {
     Route::post('/parse-runs', [AdminParseRunController::class, 'store']);
     Route::post('/parse-runs/{parseRun}/cancel', [AdminParseRunController::class, 'cancel']);
     Route::delete('/parse-runs/{parseRun}', [AdminParseRunController::class, 'destroy']);
+
+    Route::get('/update/check', [\App\Http\Controllers\Api\AdminUpdateController::class, 'check']);
+    Route::post('/update/start', [\App\Http\Controllers\Api\AdminUpdateController::class, 'start']);
+    Route::get('/update/status', [\App\Http\Controllers\Api\AdminUpdateController::class, 'status']);
+    Route::post('/update/rollback', [\App\Http\Controllers\Api\AdminUpdateController::class, 'rollback']);
 });

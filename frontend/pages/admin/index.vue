@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="admin-shell min-h-screen text-ink">
     <div class="admin-shell__glow admin-shell__glow--left" />
     <div class="admin-shell__glow admin-shell__glow--right" />
@@ -8,9 +8,14 @@
         <div class="hero-card">
           <div class="grid gap-8 xl:grid-cols-[minmax(0,1.35fr)_420px] xl:items-end">
             <div>
-              <div class="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-brand shadow-sm">
-                <Sparkles class="h-3.5 w-3.5" />
-                Control Room
+              <div class="flex items-center justify-between max-w-3xl">
+                <div class="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-brand shadow-sm">
+                  <Sparkles class="h-3.5 w-3.5" />
+                  Control Room
+                </div>
+                <button @click="handleLogout" class="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors px-3 py-1 bg-white/50 rounded-full border border-slate-200">
+                  Выйти
+                </button>
               </div>
               <h1 class="mt-4 max-w-3xl text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">Управление скидками и источниками данных</h1>
               <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
@@ -812,14 +817,27 @@
           </div>
         </section>
 
+        <!-- Updates Section -->
+        <AdminUpdateManager v-if="activeSection === 'updates'" />
+
       </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
+
+import { useAuth } from '~/composables/useAuth'
 import { Activity, ArrowLeft, Building2, Database, Download, Loader2, MapPinned, Play, RefreshCw, Search, Settings2, Sparkles, Store as StoreIcon } from 'lucide-vue-next'
 import type { Category, Chain, City, ListResponse, Store } from '~/types/api'
+
+const { logout } = useAuth()
+const handleLogout = () => {
+  logout()
+}
 
 type ParseRun = {
   id: number
@@ -897,7 +915,7 @@ type LentaSessionState = {
 
 const api = useApi()
 const config = useRuntimeConfig()
-const activeSection = ref<'magnit' | 'metro' | 'lenta' | 'parsing'>('parsing')
+const activeSection = ref<'magnit' | 'metro' | 'lenta' | 'parsing' | 'updates'>('parsing')
 const selectedCityId = useCookie<number>('discounts_city_id', {
   default: () => 0,
   maxAge: 60 * 60 * 24 * 365,
@@ -972,7 +990,8 @@ const navSections = [
   { id: 'parsing' as const, label: 'Парсинг', description: 'Очередь, статусы и ручной запуск', icon: Play },
   { id: 'magnit' as const, label: 'Магнит', description: 'Карта, импорт и категории', icon: MapPinned },
   { id: 'metro' as const, label: 'METRO', description: 'Синхронизация точек и категорий', icon: StoreIcon },
-  { id: 'lenta' as const, label: 'Лента', description: 'Pickup-магазины и парсер', icon: StoreIcon }
+  { id: 'lenta' as const, label: 'Лента', description: 'Pickup-магазины и парсер', icon: StoreIcon },
+  { id: 'updates' as const, label: 'Обновления', description: 'Версия, git и автоматический деплой', icon: RefreshCw }
 ]
 
 const { data: citiesData, refresh: refreshCities } = await useAsyncData('admin-cities', () => api<ListResponse<City>>('/cities'))
