@@ -29,12 +29,8 @@ export const useAuth = () => {
   const logout = async () => {
     if (token.value) {
       try {
-        await $fetch(`${apiUrl}/auth/logout`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token.value}`
-          }
-        })
+        const api = useApi()
+        await api('/auth/logout', { method: 'POST' })
       } catch (e) {
         // ignore
       }
@@ -47,11 +43,8 @@ export const useAuth = () => {
   const fetchUser = async () => {
     if (!token.value) return null
     try {
-      const response = await $fetch(`${apiUrl}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token.value}`
-        }
-      })
+      const api = useApi()
+      const response = await api<{ user: any }>('/auth/me')
       user.value = response.user
       return user.value
     } catch (e) {

@@ -5,12 +5,14 @@ export function useApi() {
     baseURL: config.public.apiBase,
     onRequest({ request, options }) {
       const token = useCookie('auth_token')
-      options.headers = options.headers || {}
-      options.headers['Accept'] = 'application/json'
+      const headers = new Headers(options.headers || {})
+      headers.set('Accept', 'application/json')
       
       if (token.value) {
-        options.headers['Authorization'] = `Bearer ${token.value}`
+        headers.set('Authorization', `Bearer ${token.value}`)
       }
+
+      options.headers = headers
     },
     onResponseError({ response }) {
       if (response.status === 401) {
