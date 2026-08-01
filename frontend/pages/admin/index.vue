@@ -1580,11 +1580,18 @@ function currentMapBox() {
 }
 
 function magnitSearchKey(box: ReturnType<typeof currentMapBox>) {
+  const lat1 = Number(box.lat1)
+  const lon1 = Number(box.lon1)
+  const lat2 = Number(box.lat2)
+  const lon2 = Number(box.lon2)
+  if (!Number.isFinite(lat1) || !Number.isFinite(lon1) || !Number.isFinite(lat2) || !Number.isFinite(lon2)) {
+    return '0:0:0:0'
+  }
   return [
-    Number(box.lat1).toFixed(3),
-    Number(box.lon1).toFixed(3),
-    Number(box.lat2).toFixed(3),
-    Number(box.lon2).toFixed(3),
+    lat1.toFixed(3),
+    lon1.toFixed(3),
+    lat2.toFixed(3),
+    lon2.toFixed(3),
   ].join(':')
 }
 
@@ -1803,9 +1810,11 @@ function formatRelativeTime(value: string) {
   return formatter.format(diffDays, 'day')
 }
 
-function formatCoords(latitude: number | null, longitude: number | null) {
-  if (latitude === null || longitude === null) return '-'
-  return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+function formatCoords(latitude: number | string | null | undefined, longitude: number | string | null | undefined) {
+  const lat = latitude !== null && latitude !== undefined ? Number(latitude) : NaN
+  const lon = longitude !== null && longitude !== undefined ? Number(longitude) : NaN
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return '-'
+  return `${lat.toFixed(6)}, ${lon.toFixed(6)}`
 }
 
 function normalizeCityId(value: unknown) {
