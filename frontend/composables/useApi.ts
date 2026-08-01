@@ -15,9 +15,6 @@ export function useApi() {
     onResponseError({ response }) {
       if (response.status === 401) {
         token.value = null
-        if (process.client) {
-          window.location.href = '/admin/login'
-        }
       }
       if (response._data && typeof response._data === 'object' && response._data.message) {
         response.statusText = response._data.message

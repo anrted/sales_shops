@@ -2,7 +2,11 @@ import { ref } from 'vue'
 import { useCookie, useState, useRuntimeConfig, navigateTo } from '#app'
 
 export const useAuth = () => {
-  const token = useCookie<string | null>('auth_token')
+  const token = useCookie<string | null>('auth_token', {
+    path: '/',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7
+  })
   const user = useState('user', () => null)
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiBase || 'http://localhost:8000/api'
